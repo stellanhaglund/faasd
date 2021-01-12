@@ -46,7 +46,7 @@ func Remove(ctx context.Context, client *containerd.Client, name string) error {
 			}
 
 			log.Printf("Need to kill task: %s\n", name)
-			if err = killTask(ctx, t); err != nil {
+			if err = KillTask(ctx, t); err != nil {
 				return fmt.Errorf("error killing task %s, %s, %s", container.ID(), name, err)
 			}
 		}
