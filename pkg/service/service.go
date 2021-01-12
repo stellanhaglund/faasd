@@ -66,7 +66,7 @@ func Remove(ctx context.Context, client *containerd.Client, name string) error {
 }
 
 // Adapted from Stellar - https://github.com/stellar
-func killTask(ctx context.Context, task containerd.Task) error {
+func KillTask(ctx context.Context, task containerd.Task) error {
 
 	killTimeout := 30 * time.Second
 
