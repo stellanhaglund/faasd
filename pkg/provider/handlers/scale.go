@@ -88,7 +88,7 @@ func MakeReplicaUpdateHandler(client *containerd.Client, cni gocni.CNI) func(w h
 			// If a task is running, pause it
 			if taskExists && taskStatus.Status == containerd.Running {
 				if killErr := service.KillTask(ctx, task); killErr != nil {
-					wrappedPauseErr := fmt.Errorf("error deleting task %s, error: %s", name, pauseErr)
+					wrappedPauseErr := fmt.Errorf("error deleting task %s, error: %s", name, killErr)
 					log.Printf("[Scale] %s\n", wrappedPauseErr.Error())
 					http.Error(w, wrappedPauseErr.Error(), http.StatusNotFound)
 				}
