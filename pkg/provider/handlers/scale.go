@@ -14,6 +14,7 @@ import (
 
 	"github.com/openfaas/faas-provider/types"
 	faasd "github.com/openfaas/faasd/pkg"
+	"github.com/openfaas/faasd/pkg/service"
 )
 
 func MakeReplicaUpdateHandler(client *containerd.Client, cni gocni.CNI) func(w http.ResponseWriter, r *http.Request) {
@@ -86,12 +87,17 @@ func MakeReplicaUpdateHandler(client *containerd.Client, cni gocni.CNI) func(w h
 		if req.Replicas == 0 {
 			// If a task is running, pause it
 			if taskExists && taskStatus.Status == containerd.Running {
-				if pauseErr := task.Pause(ctx); pauseErr != nil {
-					wrappedPauseErr := fmt.Errorf("error pausing task %s, error: %s", name, pauseErr)
+				if killErr := service.KillTask(ctx, task); killErr != nil {
+					wrappedPauseErr := fmt.Errorf("error deleting task %s, error: %s", name, pauseErr)
 					log.Printf("[Scale] %s\n", wrappedPauseErr.Error())
 					http.Error(w, wrappedPauseErr.Error(), http.StatusNotFound)
-					return
 				}
+				// if pauseErr := task.Pause(ctx); pauseErr != nil {
+				// 	wrappedPauseErr := fmt.Errorf("error pausing task %s, error: %s", name, pauseErr)
+				// 	log.Printf("[Scale] %s\n", wrappedPauseErr.Error())
+				// 	http.Error(w, wrappedPauseErr.Error(), http.StatusNotFound)
+				// 	return
+				// }
 			}
 		}
 
